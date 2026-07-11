@@ -71,6 +71,62 @@ npm test
 
 ---
 
+## 🏗️ Terraform Commands & Usage
+
+Since Terraform is used throughout this repository for Infrastructure as Code (IaC), here is a reference for the essential commands, their purposes, and how they apply to the projects:
+
+### 1. `terraform init`
+- **Purpose**: Initializes a new or existing Terraform working directory. It downloads the required provider plugins (such as `aws` or `random`), sets up modules, and configures the backend state repository.
+- **Usage**: Run this first whenever you navigate to a directory containing `.tf` files.
+  ```bash
+  terraform init
+  ```
+
+### 2. `terraform validate`
+- **Purpose**: Checks whether the configuration is syntactically valid and internally consistent. It verifies resource properties, variable definitions, and types without querying real cloud APIs.
+- **Usage**: Use this to check for syntax errors before running a plan.
+  ```bash
+  terraform validate
+  ```
+
+### 3. `terraform fmt`
+- **Purpose**: Formats all configuration files in the current directory to conform to standard Terraform language style guidelines (consistent indentation, alignment, and formatting).
+- **Usage**: Run this to clean up file styling.
+  ```bash
+  terraform fmt
+  ```
+
+### 4. `terraform plan`
+- **Purpose**: Generates an execution plan. It compares the current state of resources in AWS with the configuration files and details what changes (additions, modifications, or deletions) will be made.
+- **Usage**: Review the plan carefully to ensure it aligns with your expectations.
+  ```bash
+  terraform plan
+  ```
+
+### 5. `terraform apply`
+- **Purpose**: Applies the changes required to reach the desired state of the configuration. It communicates with AWS APIs to provision, modify, or delete infrastructure resources.
+- **Usage**: Run this to deploy your configuration. Use `-auto-approve` in non-interactive/automation environments.
+  ```bash
+  terraform apply
+  ```
+
+### 6. `terraform destroy`
+- **Purpose**: Destroys all remote resources managed by the current Terraform configuration. This is critical for clearing cloud infrastructure once your testing or lab session is complete to prevent unintended charges.
+- **Usage**:
+  ```bash
+  terraform destroy
+  ```
+
+### 7. `terraform state`
+- **Purpose**: Performs advanced state management. Terraform tracks the current infrastructure mapping in a state file (`terraform.tfstate`). This command lets you list, show, or inspect objects in the state safely.
+- **Usage**:
+  ```bash
+  # List all resources currently tracked in state
+  terraform state list
+  ```
+
+---
+
 ## 📝 Topic Highlights
 
 ### ⚡ Topic 4: Serverless & Event-Driven Systems
