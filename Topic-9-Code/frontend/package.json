@@ -1,0 +1,22 @@
+{
+  "name": "topic-9-frontend",
+  "version": "1.0.0",
+  "description": "Next.js frontend for Topic 9 Full-Stack Integration",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.2",
+    "@types/react": "^18.2.25",
+    "@types/react-dom": "^18.2.8",
+    "typescript": "^5.2.2"
+  }
+}

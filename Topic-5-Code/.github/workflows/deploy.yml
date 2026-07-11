@@ -1,0 +1,37 @@
+name: Continuous Deployment to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write # Required for AWS OIDC authentication
+  contents: read  # Required for actions/checkout
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Configure AWS Credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsOidcAssumeRole
+          aws-region: us-east-1
+          audience: sts.amazonaws.com
+
+      - name: Zip Deployment Bundle
+        run: zip -r deployment-bundle.zip . -x "*.git*"
+
+      - name: Upload Artifacts to AWS S3
+        run: |
+          aws s3 cp deployment-bundle.zip s3://my-codepipeline-deployment-bucket/builds/

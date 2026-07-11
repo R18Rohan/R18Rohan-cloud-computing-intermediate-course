@@ -1,0 +1,75 @@
+{
+  "Comment": "AWS Step Functions state machine orchestrating purchase transactions",
+  "StartAt": "ProcessPayment",
+  "States": {
+    "ProcessPayment": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:process-payment",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.Timeout", "States.TaskFailed"],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "HandlePaymentFailure"
+        }
+      ],
+      "Next": "VerifyPaymentStatus"
+    },
+    "VerifyPaymentStatus": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.paymentStatus",
+          "StringEquals": "APPROVED",
+          "Next": "FulfillmentParallel"
+        }
+      ],
+      "Default": "HandlePaymentFailure"
+    },
+    "FulfillmentParallel": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "PublishFulfillmentEvent",
+          "States": {
+            "PublishFulfillmentEvent": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:publish-fulfillment",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "UpdateDatabaseRecord",
+          "States": {
+            "UpdateDatabaseRecord": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:123456789012:function:update-db",
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "TransactionSuccess"
+    },
+    "HandlePaymentFailure": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:handle-failure",
+      "Next": "TransactionFail"
+    },
+    "TransactionSuccess": {
+      "Type": "Succeed"
+    },
+    "TransactionFail": {
+      "Type": "Fail",
+      "Cause": "Payment declined or processing failure",
+      "Error": "PaymentProcessingError"
+    }
+  }
+}

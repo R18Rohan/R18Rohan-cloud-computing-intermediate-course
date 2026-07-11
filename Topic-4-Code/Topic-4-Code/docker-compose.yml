@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    read_only: true # Hardening: read-only filesystem
+    tmpfs:
+      - /tmp
+      - /run
+    environment:
+      - NODE_ENV=production
+    networks:
+      - custom-bridge-network
+    depends_on:
+      - database
+
+  database:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=app_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=securepassword123
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - custom-bridge-network
+
+networks:
+  custom-bridge-network:
+    driver: bridge # Docker Networking: Bridge driver
+
+volumes:
+  db-data:
